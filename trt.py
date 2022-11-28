@@ -5,6 +5,8 @@
 import argparse
 import os
 import shutil
+import sys
+import os.path as osp
 from loguru import logger
 
 import tensorrt as trt
@@ -13,6 +15,10 @@ from torch2trt import torch2trt
 
 from torch.nn.parallel.data_parallel import DataParallel
 import torch.backends.cudnn as cudnn
+
+sys.path.insert(0, osp.join('.', 'main'))
+sys.path.insert(0, osp.join('.', 'data'))
+sys.path.insert(0, osp.join('.', 'common'))
 
 from config import cfg
 from model import get_pose_net
@@ -42,7 +48,7 @@ def main():
     model.load_state_dict(ckpt['network'])
     model.eval()
 
-    model.head.decode_in_inference = False
+    # model.head.decode_in_inference = False
     x = torch.ones(1, 3, 256, 256).cuda()
     y = torch.ones(1, 1, 1).cuda()
     model_trt = torch2trt(
